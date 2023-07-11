@@ -1,0 +1,11 @@
+.formContainer{
+    text-align: center;
+    width:30%;
+    margin-left:35%;
+    margin-top:5%;
+    border: 2px solid #FFA600;
+    border-radius: 15px;
+    font-family: "Avenir Next", serif;
+    font-size: large;
+    background-color: #FFA60088;
+}

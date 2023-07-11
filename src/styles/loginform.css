@@ -1,7 +1,7 @@
 
 .formContainer{
     text-align: center;
-    width:33%;
+    width:30%;
     margin-left:35%;
     margin-top:5%;
     border: 2px solid #FFA600;
@@ -9,7 +9,6 @@
     font-family: "Avenir Next", serif;
     font-size: large;
     background-color: #FFA60088;
-
 }
 
 .loginForm img.logo{
@@ -19,14 +18,14 @@
 
 .loginForm .text{
     color:#3B569B;
-    font-size: 1.1rem;
+    font-size: 1.1em;
 }
 .loginForm input {
-    padding-left:3rem;
-    height: 3rem;
+    padding-left:3em;
+    height: 3em;
     min-width: 50%;
     width: 80%;
-    margin-top: 2rem;
+    margin-top: 2em;
     border: 1px solid #FFA600;
     border-radius: 5px;
     transition: 0.2s ease-out;
@@ -39,9 +38,11 @@
     background-repeat: no-repeat;
 }
 
+
+
 .loginForm input:focus {
     border: 1.5px solid #3B569BAA;
-    transform: scale(1.05);
+    //transform: scale(1.05);
     border-radius: 4px;
     outline:none;
     box-shadow: 3px 3px #00000044;
@@ -72,7 +73,7 @@
 
 .loginForm button.submitButton {
     margin-top: 2.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     width:6rem;
     height: 3rem;
     border:none;
@@ -81,4 +82,20 @@
     color:white;
     font-size: large;
     font-weight: bolder;
+    cursor:pointer;
+}
+
+.loginForm button.link {
+    color:#3B569B;
+    font-weight: bolder;
+    border:none;
+    background: none;
+    cursor:pointer;
+}
+
+.loginForm div.alert{
+    margin-top: 1rem;
+    color: #E04D4D;
+    font-weight: bold;
+    font-size: medium;
 }

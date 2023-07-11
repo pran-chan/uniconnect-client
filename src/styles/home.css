@@ -1,0 +1,24 @@
+
+div.background{
+    background: red url("../../public/images/background.jpg") no-repeat;
+    background-size: cover;
+    backdrop-filter: blur(5px);
+
+    height:100%;
+}
+
+div.search{
+    width:60%;
+    margin-left:18%;
+    border: 2px solid #FFA600;
+    border-radius: 15px;
+    background-color: #FFA60088;
+    min-height: 25%;
+}
+
+select.selectDrop{
+    width: 10em;
+    border: 1px solid #FFA600;
+    min-height: 3em;
+    margin:1rem;
+}
