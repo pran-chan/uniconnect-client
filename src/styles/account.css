@@ -1,11 +1,184 @@
-.formContainer{
-    text-align: center;
-    width:30%;
-    margin-left:35%;
+
+.profilePictureContainer{
+    position:relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #c89c6e;
+}
+
+.profileContainer{
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.profileDetails{
+    margin-left: 1rem;
+}
+
+img.profilePicture{
+    position: absolute;
+    height:160px;
+    left: -15px;
+}
+
+.educationContainer, .experienceContainer{
+    display:flex;
+}
+
+.editButton {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    border:solid 1px #E04D4D;
+    border-radius: 50%;
+    background-color: #E04D4DF0;
+    background-image: url("../../public/icons/delete.png");
+    background-size: 45%;
+    background-position: 6px 5px;
+    background-repeat: no-repeat;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+
+}
+.editButton:hover {
+    width:30px;
+    height: 30px;
+    border-radius: 50%;
+    background-size: 47%;
+    background-position: 7px 6px;
+    background-color: #E04D4D;
+}
+
+.education{
+    position:relative;
+    flex: 1;
+    text-align: left;
+    padding: 1em;
+    min-width:20%;
+    max-width: 35%;
     margin-top:5%;
-    border: 2px solid #FFA600;
-    border-radius: 15px;
-    font-family: "Avenir Next", serif;
+    margin-left: 2%;
+    margin-right: 2%;
+    border: 2px solid #3B569B;
+    border-radius: 10px;
     font-size: large;
-    background-color: #FFA60088;
+    background-color: #3B569B77;
+}
+
+.education .degree{
+    font-weight: bold;
+    font-size: larger;
+}
+
+.education .institution{
+    font-weight: normal;
+    font-size: larger;
+}
+.education .studyField{
+    float:right;
+    font-weight: normal;
+    font-size: larger;
+}
+
+.education .city,.state,.country{
+    font-weight: normal;
+    font-size: medium;
+}
+
+.education .startDate,.endDate{
+    font-weight: normal;
+    font-size: medium;
+}
+
+.experience {
+    position:relative;
+    flex: 1;
+    text-align: left;
+    padding: 1em;
+    min-width:20%;
+    max-width: 30%;
+    margin-top:5%;
+    margin-left: 2%;
+    margin-right: 2%;
+    border: 2px solid #3B569B;
+    border-radius: 10px;
+    font-size: large;
+    background-color: #3B569B77;
+}
+
+.experience .title{
+    font-weight: bold;
+    font-size: larger;
+}
+
+.experience .company{
+    font-weight: normal;
+    font-size: larger;
+}
+
+.experience .city,.state,.country{
+    font-weight: normal;
+    font-size: medium;
+}
+
+.experience .description{
+    font-weight: normal;
+    font-size: 0.9rem;
+}
+
+.experience .startDate,.endDate{
+    font-weight: normal;
+    font-size: medium;
+}
+
+.addButton{
+    margin:3rem;
+    width:auto;
+    padding-left:1rem;
+    padding-right:1rem;
+    height: 3rem;
+    border:none;
+    border-radius: 5px;
+    background-color: #3B569B;
+    color:white;
+    font-size: large;
+    font-weight: bolder;
+    cursor:pointer;
+}
+
+
+
+div.outlookConnect{
+    height:3rem;
+    width: 10rem;
+    border: 1px solid #3B569B;
+    background-color: white;
+    border-radius: 10px;
+    margin:2%;
+    padding:0.5rem;
+    display: flex;
+    vertical-align: center;
+    cursor:pointer;
+}
+
+img.outlook{
+    height:50px;
+    width: 100px;
+    flex:1;
+}
+
+span.outlook{
+    margin:7%;
+    flex:1;
+    font-weight: 600;
+    font-size: 1.3rem;
 }

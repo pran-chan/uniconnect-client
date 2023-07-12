@@ -9,7 +9,7 @@ export default function NavBar() {
 	const [isNavExpanded, setIsNavExpanded] = useState(false);
 	const navigate = useNavigate();
 	useEffect(()=>{
-		console.log("Inside UseEffect");
+		if(authUser) return;
 		if(authUser==null) {
 			const userData = JSON.parse(localStorage.getItem('userData'));
 			console.log(userData);
@@ -17,11 +17,9 @@ export default function NavBar() {
 				setIsLoggedIn(true);
 				setAuthUser(userData);
 			}
-			console.log("Inside AuthUserNull");
 		}
-	});
+	},[authUser]);
 	const logOut = (e) => {
-		console.log(e);
 		e.preventDefault();
 		localStorage.removeItem('userData');
 		setIsLoggedIn(false);
@@ -47,7 +45,7 @@ export default function NavBar() {
 				}>
 				<ul>
 					{isLoggedIn ? <li><Link to="/account">Account</Link></li>: <></>}
-					<li> {isLoggedIn ? <><span onClick={logOut}>Log Out</span></> : <Link to="/login">Login</Link>}</li>
+					<li style={{cursor:"pointer"}}> {isLoggedIn ? <><span onClick={logOut}>Log Out</span></> : <Link to="/login">Login</Link>}</li>
 				</ul>
 			</div>
 		</nav>

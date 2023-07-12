@@ -16,16 +16,18 @@ export default function Login(){
 
 	useEffect(()=>{
 		if(isLoggedIn){
-			navigate(-1);
+			navigate("/account");
 		}
-	})
+	},[isLoggedIn,authUser])
 
 	function handleLogin(){
+		console.log("Inside handleLogin");
 		axios.get("http://localhost:8000/user/profile",{
 			headers:{
 				'Authorization': `Token ${authUser.authToken}`
 			}
 		}).then(response => {
+			console.log("Fetched profile data");
 			if(response.data){
 				let userData = response.data;
 				authUser.username = userData.username;
@@ -36,6 +38,8 @@ export default function Login(){
 				localStorage.setItem('userData',JSON.stringify(authUser));
 				setIsLoggedIn(true);
 			}
+		}).catch(err=>{
+			console.log(err);
 		});
 	}
 
@@ -55,6 +59,7 @@ export default function Login(){
 					"email":email,
 					"authToken":response.data.token
 				});
+				console.log("Succesfully logged in");
 				handleLogin();
 			}
 		}).catch((error)=>{
@@ -78,7 +83,7 @@ export default function Login(){
 				{errors.email && <p role="alert">{errors.email?.message}</p>}
 				<input {...register("password",{required:true, minLength:{value:8,message:"Password is atleast 8 characters"}})} id="password" className="password" type="password" placeholder="Password"/>
 				{errors.password && <p role="alert">{errors.password?.message}</p>}
-				{alertText ? <div className="alert">{alertText}</div> : <></>}
+				{alertText ? <div className="alert">{alertText}</div> : <></>}<br/>
 				<button type="submit" id="submit" className="submitButton">Log In</button><br/>
 				<button className="link" onClick={toggleSignUp}>Not registered? Click here!</button>
 			</form>

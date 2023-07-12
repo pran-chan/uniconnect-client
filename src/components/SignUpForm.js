@@ -74,6 +74,7 @@ export default function SignUp(){
 							"email":postData.email,
 							"authToken":resp.data.token
 						});
+						console.log(authUser);
 						handleLogin();
 					}
 				});
@@ -112,7 +113,7 @@ export default function SignUp(){
 				<input {...register("phone",{required:"Phone is Required"})} id="phone" className="phone" type="tel" placeholder="Phone" />
 				<input {...register("password",{required:true, minLength:{value:8,message:"Password is atleast 8 characters"}})} id="password" className="password" type="password" placeholder="Password" />
 				<input {...register("confirm_password",{required:true, minLength:{value:8,message:"Password is atleast 8 characters"}})} id="confirm_pass" className="password" type="password" placeholder="Retype Password"/>
-				{alertText ? <div className="alert">{alertText}</div> : <></>}
+				{alertText ? <div className="alert">{alertText}</div> : <></>}<br/>
 				<button type="submit" id="submit" className="submitButton">Sign Up</button><br/>
 				<button className="link" onClick={toggleSignUp}>Already registered? Click here!</button>
 			</form>
