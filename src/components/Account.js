@@ -178,32 +178,36 @@ export default function Account() {
 
 	return (
 		<>
-			<h2>Profile</h2>
-			{authUser ? (
-			<div className="profileContainer">
-				<div className="profilePictureContainer">
-					<img src="../images/van-gogh.jpg" className="profilePicture" alt="profile picture"/>
+			<div className="accountContainer">
+				<div className="blur"></div>
+				<h2>Profile</h2>
+				{authUser ? (
+				<div className="profileContainer">
+					<div className="profilePictureContainer">
+						<img src="../images/van-gogh.jpg" className="profilePicture" alt="profile picture"/>
+					</div>
+					<div className="profileDetails">
+						<div>{authUser.firstName} {authUser.lastName}</div>
+						<div>{authUser.email}</div>
+					</div>
+				</div>) : null}
+				<h3>Education</h3>
+				<div className="educationContainer">
+					{educationBlock}
 				</div>
-				<div className="profileDetails">
-					<div>{authUser.firstName} {authUser.lastName}</div>
-					<div>{authUser.email}</div>
+				<button className="addButton" onClick={openEducation}>Add Education</button>
+				<h3>Experience</h3>
+				<div className="experienceContainer">
+					{experienceBlock}
 				</div>
-			</div>) : null}
-			<h3>Education</h3>
-			<div className="educationContainer">
-				{educationBlock}
+				<button className="addButton" onClick={openExperience}>Add Experience</button>
+				<h3>Integration</h3>
+				<div  className="outlookConnect" onClick={connectToOutlook}>
+					<img className="outlook" src="../icons/outlook.svg" /><span className="outlook">Connect</span>
+				</div>
+				<EducationForm />
+				<ExperienceForm />
 			</div>
-			<button className="addButton" onClick={openEducation}>Add Education</button>
-			<h3>Experience</h3>
-			<div className="experienceContainer">
-				{experienceBlock}
-			</div>
-			<button className="addButton" onClick={openExperience}>Add Experience</button>
-			<div  className="outlookConnect" onClick={connectToOutlook}>
-				<img className="outlook" src="../icons/outlook.svg" /><span className="outlook">Connect</span>
-			</div>
-			<EducationForm />
-			<ExperienceForm />
 		</>
 	);
 }

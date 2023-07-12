@@ -1,3 +1,12 @@
+.accountContainer {
+    padding-left: 2rem;
+    padding-top: 1rem;
+    background-color: white;
+    margin: 1rem;
+    border: 0.5px solid #E04D4DAA;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px #c89c6e;
+}
 
 .profilePictureContainer{
     position:relative;
@@ -6,6 +15,7 @@
     border-radius: 50%;
     overflow: hidden;
     border: 2px solid #c89c6e;
+    box-shadow: 1px 1px 8px grey;
 }
 
 .profileContainer{
@@ -47,6 +57,7 @@ img.profilePicture{
     align-items: center;
     cursor: pointer;
     transition: 0.2s;
+    box-shadow: 1px 1px 1px grey;
 
 }
 .editButton:hover {
@@ -56,6 +67,7 @@ img.profilePicture{
     background-size: 47%;
     background-position: 7px 6px;
     background-color: #E04D4D;
+    box-shadow: 2px 2px 2px grey;
 }
 
 .education{
@@ -65,13 +77,14 @@ img.profilePicture{
     padding: 1em;
     min-width:20%;
     max-width: 35%;
-    margin-top:5%;
-    margin-left: 2%;
-    margin-right: 2%;
+    margin-top:1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     border: 2px solid #3B569B;
     border-radius: 10px;
     font-size: large;
     background-color: #3B569B77;
+    box-shadow: 1px 1px 4px grey;
 }
 
 .education .degree{
@@ -105,14 +118,15 @@ img.profilePicture{
     text-align: left;
     padding: 1em;
     min-width:20%;
-    max-width: 30%;
-    margin-top:5%;
-    margin-left: 2%;
-    margin-right: 2%;
+    max-width: 35%;
+    margin-top:1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     border: 2px solid #3B569B;
     border-radius: 10px;
     font-size: large;
     background-color: #3B569B77;
+    box-shadow: 1px 1px 4px grey;
 }
 
 .experience .title{
@@ -141,7 +155,8 @@ img.profilePicture{
 }
 
 .addButton{
-    margin:3rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
     width:auto;
     padding-left:1rem;
     padding-right:1rem;
@@ -153,6 +168,7 @@ img.profilePicture{
     font-size: large;
     font-weight: bolder;
     cursor:pointer;
+    box-shadow: 1px 1px 2px grey;
 }
 
 
