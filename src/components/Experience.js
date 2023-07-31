@@ -16,28 +16,35 @@ export default function Experience({experience,reloadProfile}){
 	}
 
 	return(
-		<div className="experience">
-			<div>
-				<span className="title">{experience.title}</span>
+		<div className="card mb-2 card-course" id="course_{{ course.id }}">
+			<div className="card-body card-course-body">
+				<div className="row justify-content-between">
+					<div className="col-sm">
+						<h5 className="card-title">{experience.title}</h5>
+					</div>
+				</div>
+				<span className="fw-light fs-6">{experience.company}</span>
+				<div className="mb-2">
+					<span>{experience.city}, </span>
+					<span>{experience.state}, </span>
+					<span>{experience.country}</span>n
+					<p>{experience.description}</p>
+					<div>
+						<span> From: {experience.start_date}</span>
+					</div>
+					<div>
+						<span> To: {experience.end_date}</span>
+					</div>
+				</div>
 			</div>
-			<div>
-				<span className="company">{experience.company}</span>
+			<div className="card-footer ">
+
+				<div className="row justify-content-end">
+					<div className="col-auto">
+						<button id={"delete_experience"+experience.id} data-bs-toggle="tooltip" data-bs-title="Delete experience" className="btn btn-sm btn-outline-danger" onClick={()=>{deleteExperience(experience.id)}}><i className="bi-trash3"></i></button>
+					</div>
+				</div>
 			</div>
-			<div>
-				<span className="city">{experience.city}, </span>
-				<span className="state">{experience.state}, </span>
-				<span className="country">{experience.country}</span>
-			</div>
-			<div>
-				<span className="description">{experience.description}</span>
-			</div>
-			<div>
-				<span className="startDate"> From: {experience.start_date}</span>
-			</div>
-			<div>
-				<span className="endDate"> To: {experience.end_date}</span>
-			</div>
-			<button className="editButton" onClick={()=>{deleteExperience(experience.id)}}></button>
 		</div>
 	);
 

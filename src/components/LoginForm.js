@@ -16,7 +16,7 @@ export default function Login(){
 
 	useEffect(()=>{
 		if(isLoggedIn){
-			navigate("/account");
+			navigate(-1);
 		}
 	},[isLoggedIn,authUser])
 
@@ -30,6 +30,7 @@ export default function Login(){
 			console.log("Fetched profile data");
 			if(response.data){
 				let userData = response.data;
+				authUser.id = userData.id;
 				authUser.username = userData.username;
 				authUser.firstName = userData.first_name;
 				authUser.lastName = userData.last_name;

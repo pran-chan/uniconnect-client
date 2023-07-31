@@ -20,4 +20,11 @@ body{
     background-color: #E04D4D22;
 }
 
+.btn i{
+    transition: 0.2s;
+}
 
+
+.breadcrumb-div{
+    --bs-breadcrumb-divider: '>';
+}

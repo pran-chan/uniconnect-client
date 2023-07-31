@@ -4,11 +4,11 @@ import {useAuth} from "../contexts/AuthContext";
 import {useEffect, useState} from "react";
 import Education from "./Education"
 import Experience from "./Experience";
-import Modal from 'react-modal'
 import axios, {post} from "axios";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
-
+import {Button, FloatingLabel, Form} from "react-bootstrap";
+import Modal from 'react-bootstrap/Modal';
 
 function addEducation(){
 	return(
@@ -17,16 +17,22 @@ function addEducation(){
 }
 
 export default function Account() {
-	const { register, handleSubmit, formState:{errors} } = useForm();
-	const { register:expRegister, handleSubmit:expHandleSubmit, formState:{errors: experrors} } = useForm();
+	const { register: eduRegister, handleSubmit: eduHandleSubmit, formState:{errors:eduErrors} } = useForm();
+	const { register:expRegister, handleSubmit:expHandleSubmit, formState:{errors: expErrors} } = useForm();
 	const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
 	const [educations,setEducations] = useState(null);
 	const [experiences,setExperiences] = useState(null);
-	const [educationIsOpen, setEducationOpen] = useState(false);
-	const [experienceIsOpen, setExperienceOpen] = useState(false);
 	const navigate = useNavigate();
 
-	Modal.setAppElement("body");
+	const [showEducation, setShowEducation] = useState(false);
+
+	const handleCloseEducation = () => setShowEducation(false);
+	const handleShowEducation = () => setShowEducation(true);
+
+	const [showExperience, setShowExperience] = useState(false);
+
+	const handleCloseExperience = () => setShowExperience(false);
+	const handleShowExperience = () => setShowExperience(true);
 
 	function reloadProfile(){
 		axios.get("http://localhost:8000/user/profile/", {
@@ -34,37 +40,31 @@ export default function Account() {
 				'Authorization': `Token ${authUser.authToken}`
 			}
 		}).then(resp => {
+			console.log(resp);
 			if (resp.data) {
 				setEducations(resp.data.educations);
 				setExperiences(resp.data.experiences);
 			}
+		}).catch(err=>{
+			if(err.response && err.response.data){
+				if(err.response.data.detail === "Invalid token."){
+					logOut();
+				}
+			}
 		});
 	}
 
+	const logOut = () => {
+		localStorage.removeItem('userData');
+		setIsLoggedIn(false);
+		setAuthUser(null);
+		navigate("/login");
+	}
+
 	useEffect(() => {
-		if(!isLoggedIn)
-			navigate("/login");
 		if(!authUser) return;
 		reloadProfile()
 	}, [authUser]);
-
-	function openEducation() {
-		setEducationOpen(true);
-	}
-
-	function closeEducation() {
-		setEducationOpen(false);
-		reloadProfile();
-	}
-
-	function openExperience() {
-		setExperienceOpen(true);
-	}
-
-	function closeExperience() {
-		setExperienceOpen(false);
-		reloadProfile();
-	}
 
 	function submitEducationForm(data){
 		const postData = {
@@ -78,14 +78,15 @@ export default function Account() {
 			"field_of_study": data.study_field
 		}
 		axios.post("http://localhost:8000/user/add_edu/",postData,{headers:{'Authorization':`Token ${authUser.authToken}`}}
-			).then(res => {
-				closeEducation();
-			}).catch(err => {
-				console.log(err);
-			});
+		).then(res => {
+			handleCloseEducation();
+		}).catch(err => {
+			console.log(err);
+		});
 	}
 
 	function submitExperienceForm(data){
+		console.log(data);
 		const postData = {
 			"title":data.title,
 			"company": data.company,
@@ -98,60 +99,10 @@ export default function Account() {
 		}
 		axios.post("http://localhost:8000/user/add_exp/",postData,{headers:{'Authorization':`Token ${authUser.authToken}`}}
 		).then(res => {
-			closeExperience();
+			handleCloseExperience();
 		}).catch(err => {
 			console.log(err);
 		});
-	}
-
-	function EducationForm() {
-		return(
-		<Modal className="formContainer"
-		       isOpen={educationIsOpen}
-		       onRequestClose={closeEducation}
-		       contentLabel="Add your Education"
-		       shouldCloseOnOverlayClick={false}
-		>
-			<form className="loginForm" onSubmit={handleSubmit(submitEducationForm)}>
-				<div className="title">Add an Education</div>
-				<input {...register("degree",{required:"Degree is Required"})} id="degree" className="degree" type="text" placeholder="Degree"/>
-				<input {...register("study_field",{required:"Field of Study is Required"})} id="study_field" className="studyField" type="text" placeholder="Field of Study" />
-				<input {...register("institution",{required:"Institution is Required"})} id="institution" className="institution" type="text" placeholder="Institution" />
-				<input {...register("city")} id="city" className="city" type="text" placeholder="City"/>
-				<input {...register("state",{required:"State is Required"})} id="state" className="state" type="text" placeholder="State" />
-				<input {...register("country",{required:"Country is Required"})} id="country" className="country" type="text" placeholder="Country" />
-				<input {...register("start_date",{required:"Start Date is Required"})} id="start_date" className="date" type="date" placeholder="Start Date" />
-				<input {...register("end_date",{required:"End Date is Required"})} id="end_date" className="date" type="date" placeholder="End Date"/><br/>
-				<button type="submit" id="submit" className="submitButton">Add</button>
-			</form>
-			<button className="closeButton" onClick={closeEducation}>X</button>
-		</Modal>
-		);
-	}
-
-	function ExperienceForm() {
-		return(
-			<Modal className="formContainer"
-			       isOpen={experienceIsOpen}
-			       onRequestClose={closeExperience}
-			       contentLabel="Add your Experience"
-			       shouldCloseOnOverlayClick={false}
-			>
-				<form className="loginForm" onSubmit={expHandleSubmit(submitExperienceForm)}>
-					<div className="title">Add an Experience</div>
-					<input {...expRegister("title",{required:"Job title is Required"})} id="title" className="title" type="text" placeholder="Job Title"/>
-					<input {...expRegister("company",{required:"Organization is Required"})} id="company" className="company" type="text" placeholder="Organization" />
-					<input {...expRegister("description",{required:"Description is Required"})} id="description" className="description" type="textarea" placeholder="Role description" />
-					<input {...expRegister("city")} id="city" className="city" type="text" placeholder="City"/>
-					<input {...expRegister("state",{required:"State is Required"})} id="state" className="state" type="text" placeholder="State" />
-					<input {...expRegister("country",{required:"Country is Required"})} id="country" className="country" type="text" placeholder="Country" />
-					<input {...expRegister("start_date",{required:"Start Date is Required"})} id="start_date" className="date" type="date" placeholder="Start Date" />
-					<input {...expRegister("end_date",{required:"End Date is Required"})} id="end_date" className="date" type="date" placeholder="End Date"/><br/>
-					<button type="submit" id="submit" className="submitButton">Add</button>
-				</form>
-				<button className="closeButton" onClick={closeExperience}>X</button>
-			</Modal>
-		);
 	}
 
 	function connectToOutlook(){
@@ -167,47 +118,151 @@ export default function Account() {
 	let educationBlock = null, experienceBlock = null;
 	if (educations) {
 		educationBlock = educations.map((education) => (
-			<Education key={education.id} education={education} reloadProfile={reloadProfile}/>
+			<div key={education.id} className="col">
+				<Education key={education.id} education={education} reloadProfile={reloadProfile}/>
+			</div>
 		));
 	}
 	if (experiences) {
 		experienceBlock = experiences.map((experience) => (
-			<Experience key={experience.id} experience={experience} reloadProfile={reloadProfile}/>
+			<div key={experience.id} >
+				<Experience key={experience.id} experience={experience} reloadProfile={reloadProfile}/>
+			</div>
 		));
 	}
 
+	function handleEditUsername(){
+		console.log("Edit Username")
+	}
+
+	function EducationForm() {
+		return (
+
+			<Modal show={showEducation} onHide={handleCloseEducation}>
+				<Modal.Header closeButton>
+					<Modal.Title>Add Education</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form id="educationForm" onSubmit={eduHandleSubmit(submitEducationForm)}>
+						<FloatingLabel controlId="floatingInput" label="Degree" className="mb-3">
+							<input {...eduRegister("degree",{required:"Degree is Required"})} id="education_degree" type="text" placeholder="Degree" className="form-control" autoFocus/>
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Field of Study" className="mb-3">
+							<input {...eduRegister("study_field",{required:"Field of Study is Required"})} id="education_study_field" className="form-control" type="text" placeholder="Field of Study" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Institution" className="mb-3">
+							<input {...eduRegister("institution",{required:"Institution is Required"})} id="education_institution" className="form-control" type="text" placeholder="Institution" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Country" className="mb-3">
+							<input {...eduRegister("country",{required:"Country is Required"})} id="education_country" className="form-control" type="text" placeholder="Country" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="State" className="mb-3">
+							<input {...eduRegister("state",{required:"State is Required"})} id="education_state" className="form-control" type="text" placeholder="State" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="City" className="mb-3">
+							<input {...eduRegister("city")} id="education_city" className="form-control" type="text" placeholder="City"/>
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Start Date" className="mb-3">
+							<input {...eduRegister("start_date",{required:"Start Date is Required"})} id="education_start_date" className="form-control" type="date" placeholder="Start Date" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="End Date">
+							<input {...eduRegister("end_date",{required:"End Date is Required"})} id="education_end_date" className="form-control" type="date" placeholder="End Date"/><br/>
+						</FloatingLabel>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="primary" form="educationForm" type="submit">Add</Button>
+				</Modal.Footer>
+			</Modal>
+		);
+	}
+
+	function ExperienceForm() {
+		return (
+			<Modal show={showExperience} onHide={handleCloseExperience}>
+				<Modal.Header closeButton>
+					<Modal.Title>Add Experience</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form id="experienceForm" onSubmit={expHandleSubmit(submitExperienceForm)}>
+						<FloatingLabel controlId="floatingInput" label="Title" className="mb-3">
+							<input {...expRegister("title",{required:"Title is Required"})} id="degree" type="text" placeholder="Title" className="form-control" autoFocus/>
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Organization" className="mb-3">
+							<input {...expRegister("company",{required:"Organization is Required"})} id="company" className="form-control" type="text" placeholder="Organization" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Description" className="mb-3">
+							<input {...expRegister("description",{required:"Description is Required"})} id="description" className="form-control" type="text" placeholder="Description" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Country" className="mb-3">
+							<input {...expRegister("country",{required:"Country is Required"})} id="country" className="form-control" type="text" placeholder="Country" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="State" className="mb-3">
+							<input {...expRegister("state",{required:"State is Required"})} id="state" className="form-control" type="text" placeholder="State" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="City" className="mb-3">
+							<input {...expRegister("city")} id="city" className="form-control" type="text" placeholder="City"/>
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="Start Date" className="mb-3">
+							<input {...expRegister("start_date",{required:"Start Date is Required"})} id="start_date" className="form-control" type="date" placeholder="Start Date" />
+						</FloatingLabel>
+						<FloatingLabel controlId="floatingInput" label="End Date">
+							<input {...expRegister("end_date",{required:"End Date is Required"})} id="end_date" className="form-control" type="date" placeholder="End Date"/><br/>
+						</FloatingLabel>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="primary" form="experienceForm" type="submit">Add</Button>
+				</Modal.Footer>
+			</Modal>
+		);
+	}
+
 	return (
-		<>
-			<div className="accountContainer">
-				<div className="blur"></div>
-				<h2>Profile</h2>
-				{authUser ? (
-				<div className="profileContainer">
-					<div className="profilePictureContainer">
-						<img src="../images/van-gogh.jpg" className="profilePicture" alt="profile picture"/>
-					</div>
-					<div className="profileDetails">
-						<div>{authUser.firstName} {authUser.lastName}</div>
-						<div>{authUser.email}</div>
-					</div>
-				</div>) : null}
-				<h3>Education</h3>
-				<div className="educationContainer">
+		<div className="shadow container-fluid bg-white p-0">
+			<div className="mb-2 p-4">
+				<div className="fs-2 fw-bold">Profile</div>
+				{ authUser ? (
+					<div className="row">
+						<div className="col-1">
+							<img src="../images/van-gogh.jpg" className="rounded-circle img-thumbnail w-100" alt="profile picture"/>
+						</div>
+						<div className="my-auto col-auto fs-4">
+							<div>{authUser.firstName} {authUser.lastName}</div>
+							<span id="username" className="fw-light fs-5">@{authUser.username}</span><a className="ms-3 pointer-event pe-auto" onClick={handleEditUsername} href="#"><i className="bi bi-pencil fs-5"></i></a>
+							<div className="fw-light fs-5">{authUser.email}</div>
+
+						</div>
+						<div className="col-auto">
+							<button className="btn btn-danger fs-5 fw-bold mt-3 w-auto ms-3" onClick={logOut}>Log Out</button>
+						</div>
+					</div>) : null
+				}
+			</div>
+			<div className="bg-warning-subtle p-4">
+				<div className="fs-2 fw-bold">Education</div>
+				<div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 p-3">
 					{educationBlock}
 				</div>
-				<button className="addButton" onClick={openEducation}>Add Education</button>
-				<h3>Experience</h3>
-				<div className="experienceContainer">
+				<button className="btn btn-outline-primary fs-5 fw-bold mt-3 w-auto ms-3" onClick={handleShowEducation} >Add Education</button>
+			</div>
+
+			<div className="p-4">
+				<div className="fs-2 fw-bold">Experience</div>
+				<div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 p-3">
 					{experienceBlock}
 				</div>
-				<button className="addButton" onClick={openExperience}>Add Experience</button>
-				<h3>Integration</h3>
-				<div  className="outlookConnect" onClick={connectToOutlook}>
-					<img className="outlook" src="../icons/outlook.svg" /><span className="outlook">Connect</span>
-				</div>
-				<EducationForm />
-				<ExperienceForm />
+				<button className="btn btn-outline-primary fs-5 fw-bold mt-3 w-auto ms-3" onClick={handleShowExperience} >Add Experience</button>
 			</div>
-		</>
+
+			<div className="p-4 bg-warning-subtle">
+				<div className="fs-2 fw-bold">Integration</div>
+				<button  className="btn btn-outline-primary fs-5 fw-bold ms-3" onClick={connectToOutlook}>
+					<i className="bi bi-microsoft"></i> Outlook
+				</button>
+			</div>
+			<ExperienceForm />
+			<EducationForm />
+		</div>
 	);
 }

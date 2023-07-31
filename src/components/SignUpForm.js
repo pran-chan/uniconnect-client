@@ -75,7 +75,8 @@ export default function SignUp(){
 							"authToken":resp.data.token
 						});
 						console.log(authUser);
-						handleLogin();
+						navigate("/login");
+						//setTimeout(handleLogin,100);
 					}
 				});
 			}
