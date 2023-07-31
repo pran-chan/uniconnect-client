@@ -10,31 +10,32 @@ export default function Comments({postID, userID, comments, sendComment, submitC
 	const {register:commentRegister, handleSubmit: commentHandleSubmit } = useForm();
 
 	return(
-		<div className="card mb-5 p-2" style={{'height':'250px'}} id={`comment_${postID}`}>
+		<div className="card p-2" style={{'max-height':'350px'}} id={`comment_${postID}`}>
 			<div className="overflow-y-scroll">
-
-				{comments ?
-					comments.map((comment) => (
-						<div className="card">
-							<div className="col-auto text-start p-2">
-								<div className="row justify-content-between">
-									<div className="col">
-										<Link to={`/user/${comment.posted_by.id}`}>
-										<span className="text-body-secondary fs-6 fw-light">
-											<i className="bi bi-person-circle fs-5 me-2"> </i>
+				{comments.map((comment) => (
+					<div className="card my-1">
+						<div className="col-auto text-start p-2">
+							<div className="row justify-content-between">
+								<div className="col-auto">
+									<Link to={`/user/${comment.posted_by.id}`}>
+										<span className="text-body-secondary half-size fw-light">
+											<i className="bi bi-person-circle half-size me-1"> </i>
 											{comment.posted_by.username}
 										</span>
-										</Link>
-									</div>
+									</Link>
 								</div>
-								<div>
-									{comment.content}
+								<div className="col-auto">
+										<span className="text-body-secondary half-size fw-light">
+											{comment.ctime.date}<i className="bi bi-dot"></i>{comment.ctime.time}
+										</span>
 								</div>
 							</div>
+							<div className="fs-5 p-1">
+								{comment.content}
+							</div>
 						</div>
-					)):
-					<>awdawd</>
-				}
+					</div>
+				))}
 			</div>
 			<Form id="commentForm" onSubmit={commentHandleSubmit(submitCommentForm)}>
 				<FloatingLabel controlId="floatingInput" label="Comment" className="my-2">

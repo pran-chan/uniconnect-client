@@ -9,6 +9,7 @@ import {AuthProvider} from "./contexts/AuthContext";
 import { Routes, Route} from 'react-router-dom';
 import {useState} from "react";
 import {ProtectedRoute} from "./components/ProtectedRoute";
+import ChatRoom from "./components/ChatRoom";
 
 function App() {
     const [isFormShown, setIsFormShown] = useState(false);
@@ -21,6 +22,7 @@ function App() {
                     <Route path='/signup' element={<SignUp />} />
                     <Route path='/account' element={<ProtectedRoute><Account /></ProtectedRoute>} />
                     <Route path='/community/:universityID' element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path='/community/:universityID/chat' element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
                     <Route path='/chat' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                     <Route path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
                 </Routes>

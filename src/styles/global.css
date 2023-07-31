@@ -28,3 +28,7 @@ body{
 .breadcrumb-div{
     --bs-breadcrumb-divider: '>';
 }
+
+.half-size{
+    font-size: 0.8rem;
+}

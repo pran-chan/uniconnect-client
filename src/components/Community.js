@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -13,10 +13,10 @@ import makeAnimated from 'react-select/animated';
 
 export default function Community(){
 	const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
-	const [favourites,setFavourites] = useState(null);
-	const [posts,setPosts] = useState(null);
-	const [selectedTags,setSelectedTags] = useState(null);
-	const [showPost,setShowPost] = useState(false);
+	const [favourites, setFavourites] = useState(null);
+	const [programs, setPrograms] = useState(null)
+	const [posts, setPosts] = useState(null);
+	const [showPost, setShowPost] = useState(false);
 	const {register:postRegister, control, handleSubmit: postHandleSubmit } = useForm();
 	const { universityID } = useParams();
 
@@ -60,17 +60,6 @@ export default function Community(){
 			console.log(err);
 		});
 	}
-
-	const handleDeletePost = (postID) => {
-		axios.delete("http://localhost:8000/community/post/"+postID+"/",{headers:{'Authorization':`Token ${authUser.authToken}`}}
-		).then(res => {
-			//Do Som
-		}).catch(err => {
-			console.log(err);
-		});
-	}
-
-
 
 
 	useEffect(() => {
@@ -146,7 +135,7 @@ export default function Community(){
 
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="primary" form="experienceForm" type="submit">Create Post</Button>
+					<Button variant="primary" form="postForm" type="submit">Create Post</Button>
 				</Modal.Footer>
 			</Modal>
 		);
@@ -174,14 +163,21 @@ export default function Community(){
 									</div>
 									<div className="col-auto">
 										<OverlayTrigger
+											placement="top"
+											overlay={
+												<Tooltip id={`button-tooltip-chat`}>Chatroom</Tooltip>
+											}><Link to={"chat"} className="btn btn-outline-warning ms-4"><i className="fs-5 bi bi-chat-text"></i></Link>
+										</OverlayTrigger>
+										<OverlayTrigger
 											placement="right"
 											overlay={
 												<Tooltip id={`button-tooltip-addpost`}>Add post</Tooltip>
-											}><button className="btn btn-outline-primary ms-4" onClick={handleShowPost}><i className="fs-5 bi bi-plus-lg"></i></button></OverlayTrigger>
+											}><button className="btn btn-outline-primary ms-4" onClick={handleShowPost}><i className="fs-5 bi bi-plus-lg"></i></button>
+										</OverlayTrigger>
 									</div>
 								</div>
 								{posts.posts.map((post, index) => (
-									<PostCard key={"post_"+post.id} post={post} userID={authUser.id} handleLike={handleLike} handleComment={handleComment} />
+									<PostCard key={"post_"+post.id} post={post} universityID={universityID} userID={authUser.id} handleLike={handleLike} handleComment={handleComment} loadPosts={loadPosts} />
 								))}
 							</div>
 							<div className="col-4">
@@ -256,7 +252,7 @@ export default function Community(){
 					</div>
 					<PostForm />
 				</>
-				: <></>}
+				: <h3>No posts yet!</h3>}
 		</div>
 	);
 }

@@ -7,7 +7,7 @@ import axios from "axios";
 import {useAuth} from "../contexts/AuthContext";
 
 
-export default function PostCard({post, userID, handleLike, handleComment, sendComment, submitCommentForm}){
+export default function PostCard({post, universityID, userID, handleLike, handleComment, sendComment, submitCommentForm, loadPosts}){
 
 	const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
 	const [open,setOpen] = useState(false);
@@ -37,10 +37,20 @@ export default function PostCard({post, userID, handleLike, handleComment, sendC
 		const postData = {
 			"content":data.content
 		}
-		console.log(postData);
 		axios.post("http://localhost:8000/community/post/"+data.postID+"/comment/",postData,{headers:{'Authorization':`Token ${authUser.authToken}`}}
 		).then(res => {
-			//Do Something
+			loadPosts();
+			loadComments();
+		}).catch(err => {
+			console.log(err);
+		});
+	}
+
+	function deletePost() {
+		axios.delete("http://localhost:8000/community/post/"+post.id+"/",{headers:{'Authorization':`Token ${authUser.authToken}`}}
+		).then(res => {
+			loadPosts();
+			loadComments();
 		}).catch(err => {
 			console.log(err);
 		});
@@ -55,7 +65,7 @@ export default function PostCard({post, userID, handleLike, handleComment, sendC
 					overlay={
 						<Tooltip id={`button-like-${post.id}`}>Delete Post</Tooltip>
 					}>
-				<button className="btn"><i className="bi-trash3 text-danger"></i></button>
+				<button className="btn" onClick={deletePost}><i className="bi-trash3 text-danger"></i></button>
 				</OverlayTrigger>
 			</div>
 		)
@@ -80,15 +90,15 @@ export default function PostCard({post, userID, handleLike, handleComment, sendC
 					<div className="row justify-content-between">
 						<div className="col-auto text-start">
 							<Link to={`/user/${post.posted_by.id}`}>
-							<span className="text-body-secondary fs-6 fw-light">
-								<i className="bi bi-person-circle fs-5 me-2"> </i>
+							<span className="text-body-secondary half-size fw-light">
+								<i className="bi bi-person-circle fs-5 me-1"> </i>
 								{post.posted_by.username}
 							</span>
 							</Link>
 						</div>
 						<div className="col-auto text-end">
-							<span className="text-body-secondary fs-6 fw-light">
-								{post.ctime.date}<i className="bi bi-dot mx-1"></i>{post.ctime.time}
+							<span className="text-body-secondary half-size fw-light">
+								{post.ctime.date}<i className="bi bi-dot"></i>{post.ctime.time}
 							</span>
 						</div>
 					</div>
@@ -121,14 +131,14 @@ export default function PostCard({post, userID, handleLike, handleComment, sendC
 								overlay={
 									<Tooltip id={`button-like-${post.id}`}>Copy link</Tooltip>
 								}>
-								<button id={"like"+post.id} className="btn m-0 fs-5" onClick={()=>{handleLike(post.id)}}><i className="bi bi-box-arrow-up"></i></button>
+								<button id={"like"+post.id} className="btn m-0 fs-5" onClick={()=>{  navigator.clipboard.writeText('http://localhost:3000/community/'+universityID+"/#post_"+post.id)}}><i className="bi bi-box-arrow-up"></i></button>
 							</OverlayTrigger>
 						</div>
 					</div>
 				</div>
 			</div>
 			<Collapse in={open}>
-				<div className="w-75 mx-auto mt-2">
+				<div className="w-100 mx-auto mt-2">
 					{comments ?
 						<Comments postID={post.id} userID={userID} comments={comments} sendComment={sendComment} submitCommentForm={submitCommentForm}/>
 					: <></>}
