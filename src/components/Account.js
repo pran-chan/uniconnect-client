@@ -4,30 +4,31 @@ import {useAuth} from "../contexts/AuthContext";
 import {useEffect, useState} from "react";
 import Education from "./Education"
 import Experience from "./Experience";
-import axios, {post} from "axios";
+import axios from "axios";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {Button, FloatingLabel, Form} from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 
-function addEducation(){
-	return(
-		<></>
-	);
-}
 
 export default function Account() {
 	const { register: eduRegister, handleSubmit: eduHandleSubmit, formState:{errors:eduErrors} } = useForm();
 	const { register:expRegister, handleSubmit:expHandleSubmit, formState:{errors: expErrors} } = useForm();
+	const { register:picRegister, handleSubmit:picHandleSubmit, formState:{errors: picErrors} } = useForm();
 	const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
-	const [educations,setEducations] = useState(null);
-	const [experiences,setExperiences] = useState(null);
+	const [educations, setEducations] = useState(null);
+	const [profilePicture, setProfilePicture] = useState(null);
+	const [experiences, setExperiences] = useState(null);
 	const navigate = useNavigate();
 
 	const [showEducation, setShowEducation] = useState(false);
 
 	const handleCloseEducation = () => setShowEducation(false);
 	const handleShowEducation = () => setShowEducation(true);
+
+	const [showPicture, setShowPicture] = useState(false);
+	const handleClosePicture = () => setShowPicture(false);
+	const handleShowPicture = () => setShowPicture(true);
 
 	const [showExperience, setShowExperience] = useState(false);
 
@@ -40,8 +41,8 @@ export default function Account() {
 				'Authorization': `Token ${authUser.authToken}`
 			}
 		}).then(resp => {
-			console.log(resp);
 			if (resp.data) {
+				setProfilePicture(resp.data.profile_picture)
 				setEducations(resp.data.educations);
 				setExperiences(resp.data.experiences);
 			}
@@ -66,6 +67,18 @@ export default function Account() {
 		reloadProfile()
 	}, [authUser]);
 
+
+	function submitPictureForm(data){
+		console.log(data);
+		var formData = new FormData();
+		formData.append("image", data.profile_pic[0]);
+		axios.patch('http://localhost:8000/user/upload_pic/', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+				'Authorization':`Token ${authUser.authToken}`
+			}
+		})
+	}
 	function submitEducationForm(data){
 		const postData = {
 			"degree":data.degree,
@@ -80,6 +93,7 @@ export default function Account() {
 		axios.post("http://localhost:8000/user/add_edu/",postData,{headers:{'Authorization':`Token ${authUser.authToken}`}}
 		).then(res => {
 			handleCloseEducation();
+			reloadProfile();
 		}).catch(err => {
 			console.log(err);
 		});
@@ -100,6 +114,7 @@ export default function Account() {
 		axios.post("http://localhost:8000/user/add_exp/",postData,{headers:{'Authorization':`Token ${authUser.authToken}`}}
 		).then(res => {
 			handleCloseExperience();
+			reloadProfile();
 		}).catch(err => {
 			console.log(err);
 		});
@@ -177,6 +192,26 @@ export default function Account() {
 		);
 	}
 
+	function ProfilePicForm() {
+		return (
+			<Modal show={showPicture} onHide={handleClosePicture}>
+				<Modal.Header closeButton>
+					<Modal.Title>Upload profile picture</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form id="profilePicForm" onSubmit={picHandleSubmit(submitPictureForm)}>
+						<FloatingLabel controlId="floatingInput" label="Profile Picture" className="mb-3">
+							<input {...picRegister("profile_pic",{required:"Profile picture is required"})} id="profile_pic" type="file" placeholder="Profile Pic" className="form-control"/>
+						</FloatingLabel>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="primary" form="profilePicForm" type="submit">Add</Button>
+				</Modal.Footer>
+			</Modal>
+		);
+	}
+
 	function ExperienceForm() {
 		return (
 			<Modal show={showExperience} onHide={handleCloseExperience}>
@@ -219,13 +254,13 @@ export default function Account() {
 	}
 
 	return (
-		<div className="shadow container-fluid bg-white p-0">
+		<div className="container-fluid bg-white p-0">
 			<div className="mb-2 p-4">
 				<div className="fs-2 fw-bold">Profile</div>
 				{ authUser ? (
 					<div className="row">
 						<div className="col-1">
-							<img src="../images/van-gogh.jpg" className="rounded-circle img-thumbnail w-100" alt="profile picture"/>
+								<img src={profilePicture} onClick={handleShowPicture} className="rounded-circle img-thumbnail w-100" alt="profile pic"/>
 						</div>
 						<div className="my-auto col-auto fs-4">
 							<div>{authUser.firstName} {authUser.lastName}</div>
@@ -262,6 +297,7 @@ export default function Account() {
 			</div>
 			<ExperienceForm />
 			<EducationForm />
+			<ProfilePicForm />
 		</div>
 	);
 }

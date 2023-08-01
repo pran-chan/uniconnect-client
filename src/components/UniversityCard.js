@@ -6,11 +6,11 @@ export default function UniversityCard({university}){
 	return(
 		<div className="card">
 			<div className="card-body bg-warning-subtle">
-				<div className="row">
-					<div className="col-5 offset-3">
+				<div className="row justify-content-between">
+					<div className="col-auto">
 						<span className="card-title fw-bold fs-4">{university.name}</span>
 					</div>
-					<div className="col-4 text-end">
+					<div className="col-auto text-end">
 						<OverlayTrigger
 							placement="top"
 							overlay={
@@ -28,7 +28,7 @@ export default function UniversityCard({university}){
 					<li key={program.id} className="list-group-item">
 
 						<div className="row justify-content-between text-decoration-none text-black">
-							<div className="col-7 justify-content-start">
+							<div className="col-7 fw-light justify-content-start">
 								<span>{program.name}</span>
 							</div>
 							<div className="col-4 justify-content-end">

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {useAuth} from "../contexts/AuthContext";
 
 
-export default function Education({education,reloadProfile}){
+export default function Education({education,reloadProfile,minimal}){
 	const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
 
 	function deleteEducation(id){
@@ -36,13 +36,17 @@ export default function Education({education,reloadProfile}){
 					</div>
 				</div>
 			</div>
-			<div className="card-footer ">
-				<div className="row justify-content-end">
-					<div className="col-auto">
-						<button id={"delete_education"+education.id} className="btn btn-sm btn-outline-danger" onClick={()=>{deleteEducation(education.id)}}><i className="bi-trash3"></i></button>
+			{!minimal ? (
+				<div className="card-footer ">
+					<div className="row justify-content-end">
+						<div className="col-auto">
+							<button id={"delete_education"+education.id} className="btn btn-sm btn-outline-danger" onClick={()=>{deleteEducation(education.id)}}><i className="bi-trash3"></i></button>
+						</div>
 					</div>
-				</div>
-			</div>
+				</div>)
+				: <></>
+			}
+
 		</div>
 	);
 

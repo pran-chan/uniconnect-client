@@ -17,12 +17,13 @@ li {
 body{
     font-family: "Avenir Next", serif;
     font-weight: 500;
-    background-color: #E04D4D22;
+    /*background-color: #E04D4D22;*/
 }
 
 .btn i{
     transition: 0.2s;
 }
+
 
 
 .breadcrumb-div{
@@ -40,6 +41,8 @@ body{
 .height-custom{
     max-height: 66vh;
     height: 66vh;
+    background-image: url("../../public/images/chat-back-2.jpg");
+    background-size: contain;
 }
 
 .height-custom-lg{
@@ -47,3 +50,31 @@ body{
     height: 72vh;
 }
 
+.bg-chat-own{
+    background-color: #128C7E;
+    color: white !important;
+}
+
+.bg-chat-other{
+    color: white !important;
+}
+
+.bg-application{
+    background-image: url("../../public/images/app-back.jpg");
+    /* Set a specific height */
+    min-height: 100vh !important;
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+}
+
+.blur-container{
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    box-shadow: grey 1px 1px 5px;
+    border-radius: 10px;
+}

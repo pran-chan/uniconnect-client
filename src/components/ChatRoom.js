@@ -31,7 +31,7 @@ export default function ChatRoom(){
 			chatSocket.onmessage = function (e) {
 				//Handle when socket message is received
 				const data = JSON.parse(e.data);
-				if(chats.messages && chats.messages.length){
+				if(chats.messages && !chats.messages.length){
 					chats.messages = [data.message];
 				}
 				else{
@@ -177,61 +177,63 @@ export default function ChatRoom(){
 	}
 
 	return (
-		<div className="shadow container-fluid bg-white user-select-none p-3">
-			<nav className="breadcrumb-div" aria-label="breadcrumb">
-				<ol className="breadcrumb">
-					<li className="breadcrumb-item"><a href="/">Home</a></li>
-					<li className="breadcrumb-item" aria-current="page"><a href={`/community/${universityID}/`}>Community</a></li>
-					<li className="breadcrumb-item active" aria-current="page">Chat</li>
-				</ol>
-			</nav>
-			<div className="container-fluid p-3">
-				{   chats&&university ? (
-					<>
-						<div className="row justify-content-between">
-							<div className="col-auto">
-								<span className="fw-bold display-4 mb-3">{university.name}</span>
+		<div className="user-select-none bg-white">
+			<div className=" blur-container p-3">
+				<nav className="breadcrumb-div" aria-label="breadcrumb">
+					<ol className="breadcrumb">
+						<li className="breadcrumb-item"><a href="/">Home</a></li>
+						<li className="breadcrumb-item" aria-current="page"><a href={`/community/${universityID}/`}>Community</a></li>
+						<li className="breadcrumb-item active" aria-current="page">Chat</li>
+					</ol>
+				</nav>
+				<div className="container-fluid p-3">
+					{   chats&&university ? (
+						<>
+							<div className="row justify-content-between">
+								<div className="col-auto">
+									<span className="fw-bold display-4 mb-3">{university.name}</span>
+								</div>
+								{!chats.is_joined ? (
+										<div className="col-auto">
+											<button className="btn btn-info fs-5 fw-bold" onClick={handleJoin}>Join to Chat</button>
+										</div>
+									)
+									:
+									<></>}
 							</div>
-							{!chats.is_joined ? (
-									<div className="col-auto">
-										<button className="btn btn-info fs-5 fw-bold" onClick={handleJoin}>Join to Chat</button>
-									</div>
-								)
-								:
-								<></>}
-						</div>
-						<div className="border rounded mt-2">
-							<div className="w-100 p-3 overflow-y-scroll container-fluid height-custom">
-								{chats.messages.map((chat,index,chats) => {
-									if (index + 1 === chats.length) {
-										return <Message key={chat.id} chat={chat} isLast/>
-									} else {
-										return <Message key={chat.id} chat={chat}/>
+							<div className="border rounded mt-2">
+								<div className="w-100 p-3 overflow-y-scroll container-fluid height-custom">
+									{chats.messages.map((chat,index,chats) => {
+										if (index + 1 === chats.length) {
+											return <Message key={chat.id} chat={chat} isLast/>
+										} else {
+											return <Message key={chat.id} chat={chat}/>
+										}
+									})}
+									{ chats.messages.length ?
+										<>
+										</> :
+										<div className="w-100 text-center"><span className="fw-bold display-6 mb-3 my-auto text-secondary">No Messages!</span></div>
 									}
-								})}
-								{ chats.messages.length ?
-									<>
-									</> :
-									<div className="w-100 text-center"><span className="fw-bold display-6 mb-3 my-auto text-secondary">No Messages!</span></div>
+								</div>
+								{chats.is_joined ? (
+									<Form onSubmit={handleSubmit(sendChatMessage)}>
+										<Row className="mx-1 my-2">
+											<Col className="w-100">
+												<Form.Control autoComplete="off" { ...register("chatText")} id="chatText" type="text" placeholder="Type your message here" onKeyUp={handleEnter}/>
+											</Col>
+											<Col className="col-auto">
+												<Button id="chat-message-submit" type="submit" variant="primary" ><i className="bi-send-fill me-1"></i>Send</Button>
+											</Col>
+										</Row>
+									</Form>
+								):<></>
 								}
 							</div>
-							{chats.is_joined ? (
-							<Form onSubmit={handleSubmit(sendChatMessage)}>
-								<Row className="mx-1 my-2">
-									<Col className="w-100">
-										<Form.Control autoComplete="off" { ...register("chatText")} id="chatText" type="text" placeholder="Type your message here" onKeyUp={handleEnter}/>
-									</Col>
-									<Col className="col-auto">
-										<Button id="chat-message-submit" type="submit" variant="primary" ><i className="bi-send-fill me-1"></i>Send</Button>
-									</Col>
-								</Row>
-							</Form>
-							):<></>
-							}
-						</div>
-					</>
-				): <></>
-				}
+						</>
+					): <></>
+					}
+				</div>
 			</div>
 		</div>
 	)

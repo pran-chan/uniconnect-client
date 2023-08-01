@@ -2,7 +2,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useAuth} from "../contexts/AuthContext";
 import axios from "axios";
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useParams, useSearchParams} from "react-router-dom";
 import {setCookie} from "react-use-websockets/lib/lib/client/cookie";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import ChatRoom from "./ChatRoom";
@@ -23,8 +23,21 @@ export default function Messages(userID){
 	const [chatSocket, setChatSocket] = useState(null);
 
 
+
 	useEffect(()=>{
-		scrollToBottom();
+		if(chatSocket && isOpen(chatSocket)){
+			chatSocket.close();
+		}
+		if(currentChat && !(currentChat.messages)) {
+			console.log("Messages are Empty! Going to load!")
+			loadChat();
+			setSearchParams({'channel':currentChat.name})
+		}
+		if(currentChat) {
+			scrollToBottom();
+			var element = document.getElementById(currentChat.name);
+			element.classList.add("active");
+		}
 	},[currentChat])
 
 	useEffect(()=> {
@@ -32,7 +45,12 @@ export default function Messages(userID){
 			chatSocket.onmessage = function (e) {
 				//Handle when socket message is received
 				const data = JSON.parse(e.data);
-				currentChat.messages.push(data.message)
+				if(currentChat.messages && !currentChat.messages.length){
+					currentChat.messages = [data.message];
+				}
+				else{
+					currentChat.messages.push(data.message);
+				}
 				setCurrentChat( {...currentChat});
 			};
 			chatSocket.onclose = function (e) {
@@ -55,10 +73,7 @@ export default function Messages(userID){
 	}, [authUser]);
 
 	useEffect(() => {
-		if(currentChat && !(currentChat.messages)) {
-			console.log(currentChat);
-			loadChat();
-		}
+
 	}, [currentChat]);
 
 
@@ -67,8 +82,11 @@ export default function Messages(userID){
 		axios.get("http://localhost:8000/chatroom/"+currentChat.name+"/messages/", {headers: {'Authorization': `Token ${authUser.authToken}`}}
 		).then(res => {
 			currentChat.messages = res.data.messages.reverse();
+			if(res.data.channel.type==="private"){
+				currentChat.type = res.data.channel.type;
+				//currentChat.
+			}
 			setCurrentChat( {...currentChat});
-			console.log(currentChat);
 			connectSocket();
 		}).catch(err => {
 			console.log(err);
@@ -82,8 +100,16 @@ export default function Messages(userID){
 			}
 		}).then(resp => {
 			if (resp.data) {
+				let tempChats = resp.data.channels;
 				setChats(resp.data.channels);
-				if(resp.data.channels.length){
+				console.log("Search Params:")
+				console.log(searchParams);
+				console.log("Chats:");
+				console.log(resp.data.channels);
+				if(searchParams && searchParams.has('channel')){
+					setCurrentChat({'name':searchParams.get('channel')})
+				}
+				else if(resp.data.channels.length){
 					setCurrentChat(resp.data.channels[0])
 				}
 			}
@@ -133,12 +159,9 @@ export default function Messages(userID){
 	}
 
 	function handleChatClick(chat){
-
-		var element = document.getElementById("chat_"+currentChat.id);
+		var element = document.getElementById(currentChat.name);
 		element.classList.remove("active");
 		setCurrentChat(chat);
-		var element = document.getElementById("chat_"+chat.id);
-		element.classList.add("active");
 	}
 
 	function Message(chat){
@@ -155,10 +178,10 @@ export default function Messages(userID){
 
 		let messageClass = "card p-2";
 		if(authUser.id === chat.sent_by.id){
-			messageClass += " bg-secondary-subtle"
+			messageClass += " bg-chat-own"
 		}
 		else{
-			messageClass += " bg-primary-subtle"
+			messageClass += " bg-chat-other bg-secondary"
 		}
 
 		let timeDivClass = "col-auto";
@@ -170,10 +193,14 @@ export default function Messages(userID){
 			<div className={divClass} ref={lastChat}>
 				<div className="col-auto " style={{'maxWidth': '45%','minWidth':'25%'}}>
 					<div className={userDivClass}>
-						<div className="col-auto">
-							<Link to={`/user/${chat.sent_by.id}`}>
-							<span className="text-body-secondary half-size fw-light">
-								<i className="bi bi-person-circle fs-5 me-1"> </i>
+						<div className="col-auto mb-1">
+							<Link to={`/user/${chat.sent_by.id}` }>
+								{chat.sent_by.profile_picture ? (
+										<img src={`http://localhost:8000${chat.sent_by.profile_picture}`} style={{'width':'30px','height':'100%'}} className="rounded-circle me-2" alt="profile pic"/>
+									)
+									: <span className="fs-5 text-decoration-none text-white me-1"><i className="bi bi-person-circle"></i></span>
+								}
+								<span className="half-size fw-normal text-white text-decoration-none">
 								{chat.sent_by.username}
 							</span>
 							</Link>
@@ -181,12 +208,13 @@ export default function Messages(userID){
 					</div>
 					<div className={messageClass}>
 						{chat.content}
+						<div className={timeDivClass}>
+						<span className=" half-size fw-normal">
+							{chat.ctime.date}<i className="bi bi-dot"></i>{chat.ctime.time}
+						</span>
+						</div>
 					</div>
-					<div className={timeDivClass}>
-							<span className="text-body-secondary half-size fw-light">
-								{chat.ctime.date}<i className="bi bi-dot"></i>{chat.ctime.time}
-							</span>
-					</div>
+
 				</div>
 			</div>
 		);
@@ -194,7 +222,8 @@ export default function Messages(userID){
 
 
 	return (
-		<div className="shadow container-fluid bg-white user-select-none p-3 h-100">
+		<div className="user-select-none bg-white">
+			<div className="blur-container p-3">
 			<nav className="breadcrumb-div" aria-label="breadcrumb">
 				<ol className="breadcrumb">
 					<li className="breadcrumb-item"><a href="/">Home</a></li>
@@ -215,36 +244,22 @@ export default function Messages(userID){
 									{chats && currentChat ? (
 											<div className="list-group">
 												{chats.map((chat,index) => {
-													if (chat.id === currentChat.id) {
-														return(
-															<a key={`chat_${chat.id}`} id={`chat_${chat.id}`} className="list-group-item list-group-item-action active" aria-current="true">
-																<div className="d-flex w-100 justify-content-between">
-																	{chat.university ?
-																		<>
-																			<h5 className="mt-1">{chat.university.name}</h5>
-																			<i className="bi-people fs-4"></i>
+													return(
+														<a key={`chat_${chat.id}`} id={chat.name} className="list-group-item list-group-item-action" onClick={() => handleChatClick(chat)}>
+															<div className="d-flex w-100 justify-content-between">
+																{chat.university ?
+																	<>
+																		<h5 className="mt-1">{chat.university.name}</h5>
+																		<i className="bi-people fs-4"></i>
+																	</>
+																	: <>
+																		<h5 className="mt-1">{chat.users[0].username}</h5>
+																		<i className="bi-person fs-4"></i>
 																		</>
-																		: <></>
-																	}
-																</div>
-															</a>
-														)
-													}
-													else{
-														return(
-															<a key={`chat_${chat.id}`} id={`chat_${chat.id}`} className="list-group-item list-group-item-action" onClick={() => handleChatClick(chat)}>
-																<div className="d-flex w-100 justify-content-between">
-																	{chat.university ?
-																		<>
-																			<h5 className="mt-1">{chat.university.name}</h5>
-																			<i className="bi-people fs-4"></i>
-																		</>
-																		: <></>
-																	}
-																</div>
-															</a>
-														)
-													}
+																}
+															</div>
+														</a>
+													)
 												})}
 
 											</div>
@@ -255,10 +270,10 @@ export default function Messages(userID){
 								</div>
 							</div>
 							<div className="col-9">
-								<div className="border border rounded height-custom">
+								<div className="border rounded overflow-hidden p-3">
 									{ currentChat && currentChat.messages ? (
 											<>
-												<div className="w-100 p-3 overflow-y-scroll container-fluid height-custom">
+												<div className="w-100 py-3 rounded overflow-y-scroll container-fluid height-custom">
 													{currentChat.messages.map((chat,index,chats) => {
 														if (index + 1 === chats.length) {
 															return <Message key={chat.id} chat={chat}/>
@@ -294,6 +309,7 @@ export default function Messages(userID){
 					</>
 				) : <></>
 				}
+			</div>
 			</div>
 		</div>
 	)
