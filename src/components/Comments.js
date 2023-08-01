@@ -10,7 +10,7 @@ export default function Comments({postID, userID, comments, sendComment, submitC
 	const {register:commentRegister, handleSubmit: commentHandleSubmit } = useForm();
 
 	return(
-		<div className="card p-2" style={{'max-height':'350px'}} id={`comment_${postID}`}>
+		<div className="card p-2" style={{'maxHeight':'350px'}} id={`comment_${postID}`}>
 			<div className="overflow-y-scroll">
 				{comments.map((comment) => (
 					<div className="card my-1">

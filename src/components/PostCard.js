@@ -19,6 +19,12 @@ export default function PostCard({post, universityID, userID, handleLike, handle
 		'food':'info'
 	}
 
+	const iconMap = {
+		'housing':'house',
+		'study':'book',
+		'food':'egg-fried'
+	}
+
 	useEffect(() => {
 		if(!authUser) return;
 		loadComments();
@@ -65,10 +71,23 @@ export default function PostCard({post, universityID, userID, handleLike, handle
 					overlay={
 						<Tooltip id={`button-like-${post.id}`}>Delete Post</Tooltip>
 					}>
-				<button className="btn" onClick={deletePost}><i className="bi-trash3 text-danger"></i></button>
+					<button className="btn" onClick={deletePost}><i className="bi-trash3 text-danger"></i></button>
 				</OverlayTrigger>
 			</div>
 		)
+	}
+
+	let userLink = (<Link to={`/user/${post.posted_by.id}`}>
+								<span className="text-body-secondary half-size fw-light">
+									<i className="bi bi-person-circle fs-5 me-1"> </i>
+									{post.posted_by.username}
+								</span>
+	</Link>);
+	if(post.posted_by.id === userID){
+		userLink = (<span className="text-body-secondary half-size fw-light">
+									<i className="bi bi-person-circle fs-5 me-1"> </i>
+			{post.posted_by.username}
+								</span>)
 	}
 
 
@@ -79,7 +98,7 @@ export default function PostCard({post, universityID, userID, handleLike, handle
 					<div className="row justify-content-between">
 						<div className="col-auto">
 							{post.tags.split(" ").map((tag) => (
-								<span key={`${post.id}_${tag}`} className={`badge bg-${colorMap[tag]} me-2`}><i className="bi bi-book fs-6 align-text-bottom me-1"></i>{tag}</span>
+								<span key={`${post.id}_${tag}`} className={`badge bg-${colorMap[tag]} me-2`}><i className={`bi bi-${iconMap[tag]} fs-6 align-text-bottom me-1`}></i>{tag}</span>
 							))}
 						</div>
 						{deleteButton}
@@ -89,12 +108,7 @@ export default function PostCard({post, universityID, userID, handleLike, handle
 					</div>
 					<div className="row justify-content-between">
 						<div className="col-auto text-start">
-							<Link to={`/user/${post.posted_by.id}`}>
-							<span className="text-body-secondary half-size fw-light">
-								<i className="bi bi-person-circle fs-5 me-1"> </i>
-								{post.posted_by.username}
-							</span>
-							</Link>
+							{userLink}
 						</div>
 						<div className="col-auto text-end">
 							<span className="text-body-secondary half-size fw-light">
@@ -141,8 +155,8 @@ export default function PostCard({post, universityID, userID, handleLike, handle
 				<div className="w-100 mx-auto mt-2">
 					{comments ?
 						<Comments postID={post.id} userID={userID} comments={comments} sendComment={sendComment} submitCommentForm={submitCommentForm}/>
-					: <></>}
-					</div>
+						: <></>}
+				</div>
 			</Collapse>
 		</>
 

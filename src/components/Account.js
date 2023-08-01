@@ -231,7 +231,6 @@ export default function Account() {
 							<div>{authUser.firstName} {authUser.lastName}</div>
 							<span id="username" className="fw-light fs-5">@{authUser.username}</span><a className="ms-3 pointer-event pe-auto" onClick={handleEditUsername} href="#"><i className="bi bi-pencil fs-5"></i></a>
 							<div className="fw-light fs-5">{authUser.email}</div>
-
 						</div>
 						<div className="col-auto">
 							<button className="btn btn-danger fs-5 fw-bold mt-3 w-auto ms-3" onClick={logOut}>Log Out</button>

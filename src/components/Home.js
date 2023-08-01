@@ -161,7 +161,7 @@ export default function HomePage(){
 						<div className="fs-4 mb-3">Interested Programs</div>
 						<div className="row row-cols-2">
 							{favourites.map((university, index) => (
-								<div className="col" key={university.id} id={university.id}>
+								<div className="col mb-4" key={university.id} id={university.id}>
 									<UniversityCard university={university}/>
 								</div>
 							))}

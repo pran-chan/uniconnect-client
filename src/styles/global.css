@@ -32,3 +32,18 @@ body{
 .half-size{
     font-size: 0.8rem;
 }
+
+.quarter-size{
+    font-size: 0.6rem;
+}
+
+.height-custom{
+    max-height: 66vh;
+    height: 66vh;
+}
+
+.height-custom-lg{
+    max-height: 72vh;
+    height: 72vh;
+}
+

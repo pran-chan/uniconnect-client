@@ -152,7 +152,7 @@ export default function Community(){
 			{ posts ?
 				<>
 					<div className="container-fluid p-3">
-						<span className="fw-bold display-3 mb-3">{posts.university}</span>
+						<span className="fw-bold display-4 mb-3">{posts.university}</span>
 					</div>
 					<div className="border-1 border-black">
 						<div className="row">
